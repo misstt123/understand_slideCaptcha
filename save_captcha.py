@@ -23,22 +23,23 @@ class Binance(object):
     def __init__(self):
         chrome_option = webdriver.ChromeOptions()
         chrome_option.add_experimental_option('excludeSwitches', ['enable-automation'])
-        self.driver = webdriver.Chrome(chrome_options=chrome_option)
+        self.driver = webdriver.Chrome(executable_path=r"chrome/chromedriver.exe",chrome_options=chrome_option)
         self.driver.set_window_size(1440, 900)
 
     def visit_index(self):
         # 输入邮箱和密码
-        self.driver.get("https://www.binance.co/login.html")
-        email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'email')))
+        self.driver.get("https://account.cnblogs.com/signin?returnUrl=")
+        email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'LoginName')))
         email.clear()
-        email.send_keys("xxxxxxxxxx@qq.com")
-        pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'pwd')))
+        email.send_keys("23534657")
+        pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'Password')))
         pwd.clear()
-        pwd.send_keys("xxxxxxxxx")
-
+        pwd.send_keys("54475686778")
+        time.sleep(1)
         # 点击登录，弹出滑块验证码
-        login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.ID, 'login-btn')))
+        login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.ID, 'submitBtn')))
         login_btn.click()
+        time.sleep(0.2)
         WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_fullbg')))
 
         # 进入模拟拖动流程
@@ -54,6 +55,7 @@ class Binance(object):
         # 保存两张图片
         self.save_img('full.jpg', 'geetest_canvas_fullbg')
         self.save_img('cut.jpg','geetest_canvas_bg')
+        '''
         full_image = Image.open('full.jpg')
         cut_image = Image.open('cut.jpg')
 
@@ -82,6 +84,7 @@ class Binance(object):
         else:
             print("验证成功")
 
+    '''
     def save_img(self, img_name, class_name):
         getImgJS = 'return document.getElementsByClassName("' + class_name + '")[0].toDataURL("image/png");'
         img = self.driver.execute_script(getImgJS)
