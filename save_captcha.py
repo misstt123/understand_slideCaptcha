@@ -14,10 +14,20 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from PIL import Image
 import base64
+import configparser
 
 '''
 极验验证滑块3.0版本
 '''
+
+file = 'config.ini'
+# 创建配置文件对象
+config_parse = configparser.ConfigParser()
+
+# 读取文件
+config_parse.read(file, encoding='utf-8')
+count = config_parse.getint("captcha", "count")  # 滑动验证码数数
+
 
 class Binance(object):
     def __init__(self):
@@ -40,10 +50,25 @@ class Binance(object):
         login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.ID, 'submitBtn')))
         login_btn.click()
         time.sleep(0.2)
-        WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_fullbg')))
+        try:
+            WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_fullbg')))
+        except:
+            while(time.sleep(0.2),True):
+                login_btn.click()
+                break
 
         # 进入模拟拖动流程
-        self.analog_drag()
+        finally:
+            while(time.sleep(0.5),True):
+                try:
+                    self.analog_drag()
+                except:
+                    retry_but = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_panel_error_content')))
+                    retry_but.click()
+                    time.sleep(0.2)
+                    # login_btn.click()
+                    # time.sleep(0.2)
+
 
     def analog_drag(self):
 
@@ -53,8 +78,8 @@ class Binance(object):
         time.sleep(1)
 
         # 保存两张图片
-        self.save_img('full.jpg', 'geetest_canvas_fullbg')
-        self.save_img('cut.jpg','geetest_canvas_bg')
+        # self.save_img('full.jpg', 'geetest_canvas_fullbg')
+        self.save_img('geetest_canvas_bg')
         '''
         full_image = Image.open('full.jpg')
         cut_image = Image.open('cut.jpg')
@@ -85,12 +110,17 @@ class Binance(object):
             print("验证成功")
 
     '''
-    def save_img(self, img_name, class_name):
+    def save_img(self,class_name):
+        global count
         getImgJS = 'return document.getElementsByClassName("' + class_name + '")[0].toDataURL("image/png");'
         img = self.driver.execute_script(getImgJS)
         base64_data_img = img[img.find(',') + 1:]
         image_base = base64.b64decode(base64_data_img)
-        file = open(img_name, 'wb')
+        count+=1
+        file = open(f'./image/{count}.jpg', 'wb')
+        config_parse.set("captcha", "count", str(count))
+        with open("config.ini", "w+") as f:
+            config_parse.write(f)
         file.write(image_base)
         file.close()
 

@@ -31,12 +31,12 @@ class CNBlogSelenium(object):
             WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="LoginName"]')))
             username = self.driver.find_element_by_xpath('//*[@id="LoginName"]')
             username.clear()
-            username.send_keys("13534645")
+            username.send_keys("24364565")
 
             WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="Password"]')))
             password = self.driver.find_element_by_xpath('//*[@id="Password"]')
             password.clear()
-            password.send_keys("24364756")
+            password.send_keys("53647475475")
 
             WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="submitBtn"]')))
             signin = self.driver.find_element_by_xpath('//*[@id="submitBtn"]')
