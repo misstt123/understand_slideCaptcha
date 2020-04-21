@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2020/4/21
 # @Author  : lyh-god
-# @FileName: save_captcha.py
+# @FileName: sava_bilibiliCaptcha.py
 # @Software: PyCharm
 
 import random
@@ -15,6 +15,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from PIL import Image
 import base64
 import configparser
+import sys
 
 '''
 极验验证滑块3.0版本
@@ -23,8 +24,6 @@ import configparser
 file = 'config.ini'
 # 创建配置文件对象
 config_parse = configparser.ConfigParser()
-
-# 读取文件
 config_parse.read(file, encoding='utf-8')
 count = config_parse.getint("captcha", "count")  # 滑动验证码数数
 type=config_parse.getint("captcha","type")#网站类型
@@ -38,16 +37,16 @@ class Binance(object):
         self.type=type
     def visit_index(self):
         # 输入邮箱和密码
-        self.driver.get("https://account.cnblogs.com/signin?returnUrl=")
-        email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'LoginName')))
+        self.driver.get("https://passport.bilibili.com/login")
+        email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'login-username')))
         email.clear()
         email.send_keys("13542012479")
-        pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'Password')))
+        pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'login-passwd')))
         pwd.clear()
         pwd.send_keys("54475686778")
         time.sleep(1)
         # 点击登录，弹出滑块验证码
-        login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.ID, 'submitBtn')))
+        login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-login')))
         login_btn.click()
         time.sleep(0.2)
         try:
@@ -111,18 +110,21 @@ class Binance(object):
 
     '''
     def save_img(self,class_name):
+
         global count
         getImgJS = 'return document.getElementsByClassName("' + class_name + '")[0].toDataURL("image/png");'
         img = self.driver.execute_script(getImgJS)
         base64_data_img = img[img.find(',') + 1:]
         image_base = base64.b64decode(base64_data_img)
         count+=1
-        file = open(f'./image/{count}.jpg', 'wb')
+        file = open(f'./imageB/{count}.jpg', 'wb')
         config_parse.set("captcha", "count", str(count))
         with open("config.ini", "w+") as f:
             config_parse.write(f)
         file.write(image_base)
         file.close()
+
+
 
     # 判断颜色是否相近
     def is_similar_color(self, x_pixel, y_pixel):

@@ -22,7 +22,6 @@ class CNBlogSelenium(object):
         # opt.set_headless()
         self.driver = webdriver.Chrome(executable_path=r"chrome/chromedriver.exe", chrome_options=opt)
         self.driver.set_window_size(1440, 900)
-
     def visit_login(self):
         try:
 

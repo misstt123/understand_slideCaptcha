@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2020/4/21
 # @Author  : lyh-god
-# @FileName: save_captcha.py
+# @FileName: save_dfhkCaptcha.py
+# @Software: PyCharm
+
+# -*- coding: utf-8 -*-
+# @Time    : 2020/4/21
+# @Author  : lyh-god
+# @FileName: sava_bilibiliCaptcha.py
 # @Software: PyCharm
 
 import random
@@ -12,7 +18,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
-from PIL import Image
+
+import sys
 import base64
 import configparser
 
@@ -23,8 +30,6 @@ import configparser
 file = 'config.ini'
 # 创建配置文件对象
 config_parse = configparser.ConfigParser()
-
-# 读取文件
 config_parse.read(file, encoding='utf-8')
 count = config_parse.getint("captcha", "count")  # 滑动验证码数数
 type=config_parse.getint("captcha","type")#网站类型
@@ -38,24 +43,22 @@ class Binance(object):
         self.type=type
     def visit_index(self):
         # 输入邮箱和密码
-        self.driver.get("https://account.cnblogs.com/signin?returnUrl=")
-        email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'LoginName')))
-        email.clear()
-        email.send_keys("13542012479")
-        pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'Password')))
-        pwd.clear()
-        pwd.send_keys("54475686778")
-        time.sleep(1)
+        self.driver.get("http://www.ceair.com/aoc/#/flightNo/2020-05-29/MU2170")
+        # email = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'login-username')))
+        # email.clear()
+        # email.send_keys("13542012479")
+        # pwd = WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.ID, 'login-passwd')))
+        # pwd.clear()
+        # pwd.send_keys("54475686778")
+        # time.sleep(1)
         # 点击登录，弹出滑块验证码
-        login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.ID, 'submitBtn')))
-        login_btn.click()
-        time.sleep(0.2)
+        # login_btn = WebDriverWait(self.driver, 10, 0.5).until(EC.element_to_be_clickable((By.CLASS_NAME, 'btn-login')))
+        # login_btn.click()
+        # time.sleep(0.2)
         try:
             WebDriverWait(self.driver, 10, 0.5).until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_fullbg')))
         except:
-            while(time.sleep(0.2),True):
-                login_btn.click()
-                break
+            pass
 
         # 进入模拟拖动流程
         finally:
@@ -117,12 +120,14 @@ class Binance(object):
         base64_data_img = img[img.find(',') + 1:]
         image_base = base64.b64decode(base64_data_img)
         count+=1
-        file = open(f'./image/{count}.jpg', 'wb')
+        file = open(f'./imageD/{count}.jpg', 'wb')
         config_parse.set("captcha", "count", str(count))
         with open("config.ini", "w+") as f:
             config_parse.write(f)
         file.write(image_base)
         file.close()
+        while(count>50):
+            sys.exit(0)
 
     # 判断颜色是否相近
     def is_similar_color(self, x_pixel, y_pixel):
