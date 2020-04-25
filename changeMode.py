@@ -6,7 +6,7 @@
 
 from PIL import Image
 import os
-count=1
+count=105
 
 def convert_RGB(path):
     global count
@@ -16,10 +16,10 @@ def convert_RGB(path):
         img=Image.open(f"{path}/{img}")
         img=img.convert("RGB")
 
-        img.save(f'pic/{count}.jpg')
+        img.save(f'imageB_convert/{count}.jpg')
         count+=1
 
 if __name__ == '__main__':
-    lis=["imageB","imageD"]
+    lis=["image"]
     for item in lis:
         convert_RGB(item)
